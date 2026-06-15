@@ -9,9 +9,11 @@ Semantic search finds messages by meaning, not just keyword overlap:
 a query like "planning offsite agenda" can surface a message titled
 "Q2 team kickoff" if the bodies discuss the same topic, even when
 none of the query words appear in the result. msgvault builds that
-capability on top of the default keyword (FTS5) search by sending
-message text to an embedding endpoint you configure, then storing the
-vectors locally in `vectors.db` alongside your archive.
+capability on top of the default keyword search by sending message
+text to an embedding endpoint you configure, then storing the
+vectors locally. SQLite archives store vectors in `vectors.db`.
+PostgreSQL archives store them in pgvector tables inside the same
+database as the message archive.
 
 When vector search is enabled, the `search` command, the HTTP
 `/api/v1/search` endpoint, and the MCP `search_messages` tool all
@@ -46,11 +48,13 @@ separate yet.
    indexed data rows such as
    `{"data": [{"index": 0, "embedding": [...]}]}`.
 
-2. **A build with `sqlite_vec` support.** The standard `make build`
+2. **A build with a vector backend.** The standard `make build`
    target already passes `-tags "fts5 sqlite_vec"`. If you see errors
    mentioning "binary was built without -tags sqlite_vec", rebuild
    via `make build` (or `go build -tags "fts5 sqlite_vec"` if you are
-   invoking `go build` directly).
+   invoking `go build` directly). PostgreSQL vector search additionally
+   requires the `pgvector` build tag, for example
+   `go build -tags "fts5 sqlite_vec pgvector" ./cmd/msgvault`.
 
 ### Windows source builds
 
@@ -110,10 +114,35 @@ run_after_sync = true                    # run a pass after every successful sch
 ```
 
 The `[vector]` section only takes effect when `enabled = true` **and**
-the binary was built with `sqlite_vec`. If either is missing, msgvault
-behaves as before. Disabled vector search returns `vector_not_enabled`
-from server surfaces; a binary built without `sqlite_vec` reports a
-rebuild-with-sqlite-vec error when vector features are requested.
+the binary was built with the needed vector backend. If either is
+missing, msgvault behaves as before. Disabled vector search returns
+`vector_not_enabled` from server surfaces; a binary built without the
+needed backend reports a rebuild-with-vector-backend error when vector
+features are requested.
+
+### PostgreSQL and pgvector
+
+When `[data].database_url` is a PostgreSQL DSN, msgvault selects the
+pgvector backend at runtime. Use `backend = "pgvector"` as the config
+marker and build with the `pgvector` tag:
+
+```toml
+[data]
+database_url = "postgres://user:pass@host:5432/msgvault?sslmode=require"
+
+[vector]
+enabled = true
+backend = "pgvector"
+
+[vector.embeddings]
+endpoint = "http://localhost:11434/v1"
+model = "nomic-embed-text"
+dimension = 768
+```
+
+pgvector embeddings live in the PostgreSQL database. `db_path` and
+`vectors.db` apply only to the SQLite sqlite-vec backend. See
+[PostgreSQL Backend](/architecture/postgresql/) for database setup.
 
 ### Matching `max_input_chars` to your embedder's context window
 
@@ -307,7 +336,7 @@ conditions as command errors rather than structured codes.
 
 | Error | Meaning | Recovery |
 |---|---|---|
-| `vector_not_enabled` | The server or MCP process did not wire a vector backend, usually because `[vector] enabled = false`. | Set `enabled = true`, configure `[vector.embeddings]`, and start with a `sqlite_vec` build. |
+| `vector_not_enabled` | The server or MCP process did not wire a vector backend, usually because `[vector] enabled = false`. | Set `enabled = true`, configure `[vector.embeddings]`, and start with a build that includes the needed backend (`sqlite_vec` or `pgvector`). |
 | `index_stale` | Active generation's fingerprint does not match the current model, dimension, preprocessing policy, `max_input_chars`, or embedding output policy. | Run `msgvault embeddings build --full-rebuild --yes`. |
 | `index_building` | No active generation yet; one is being built. | Finish running `msgvault embeddings build` or wait for the scheduler. Use `mode=fts` for the interim. |
 | `missing_free_text` | `mode=vector` or `mode=hybrid` used with a filter-only query (no free text to embed). | Add free-text terms to `q`, or switch to `mode=fts`. |
@@ -331,7 +360,7 @@ To confirm the binary was built with vector support:
 msgvault search "probe" --mode vector
 ```
 
-A clear "rebuild with sqlite_vec" error indicates the tag is missing.
+A clear rebuild-with-vector-backend error indicates the tag is missing.
 A different error (`vector_not_enabled`, `index_stale`, etc.) means
 the command moved past the build-tag check and is now waiting on
 config or backfill.
@@ -373,3 +402,4 @@ are marked complete and not sent to the embedding endpoint.
 
 - [Web Server](/api-server/): HTTP API reference (search, stats).
 - [Searching](/usage/searching/): Full-text search syntax.
+- [Search Ranking Across Backends](/architecture/search-ranking/): Ranking differences between SQLite, PostgreSQL, sqlite-vec, and pgvector.

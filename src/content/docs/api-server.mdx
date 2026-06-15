@@ -7,9 +7,9 @@ import { Aside } from '@astrojs/starlight/components';
 
 ## Overview
 
-`msgvault serve` starts an HTTP server that exposes your local email archive over a REST API. It optionally runs a background sync scheduler to keep accounts up to date on a cron-based schedule.
+`msgvault serve` starts an HTTP server that exposes your email archive over a REST API. It optionally runs a background sync scheduler to keep accounts up to date on a cron-based schedule.
 
-The API queries the same SQLite database and attachment store as the CLI and TUI. Keyword search and ordinary archive reads stay local. If vector search is enabled, semantic and hybrid search also call the embedding endpoint configured in `[vector.embeddings]`. The server is designed for local integrations, dashboards, and automation scripts.
+The API queries the same archive database and attachment store as the CLI and TUI. SQLite is the default archive database; PostgreSQL is supported when `[data].database_url` is a PostgreSQL DSN. Keyword search and ordinary archive reads stay local to that database. If vector search is enabled, semantic and hybrid search also call the embedding endpoint configured in `[vector.embeddings]`. The server is designed for local integrations, dashboards, and automation scripts.
 
 ## Quick Start
 
