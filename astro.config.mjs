@@ -73,7 +73,8 @@ export default defineConfig({
             { label: 'Analytics & Stats', slug: 'usage/analytics' },
             { label: 'SQL Queries', slug: 'usage/querying' },
             { label: 'Deleting Email', slug: 'usage/deletion' },
-            { label: 'Multi-Account', slug: 'usage/multi-account' },
+            { label: 'Accounts & Collections', slug: 'usage/multi-account' },
+            { label: 'Deduplication', slug: 'usage/deduplication' },
           ],
         },
         {
