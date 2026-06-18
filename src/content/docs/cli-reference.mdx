@@ -895,7 +895,7 @@ msgvault cancel-deletion --all
 
 ## delete-staged
 
-Execute staged remote deletions. By default, Gmail messages are moved to trash; pass `--permanent` for permanent Gmail batch deletion. IMAP deletion removes messages from the provider using IMAP delete/expunge behavior.
+Execute staged remote deletions. Gmail deletion permanently removes messages through the Gmail batch API. IMAP deletion removes messages from the provider using IMAP delete/expunge behavior.
 
 ```bash
 msgvault delete-staged [batch-id] [flags]
@@ -904,12 +904,11 @@ msgvault delete-staged [batch-id] [flags]
 | Flag | Description |
 |---|---|
 | `-y`, `--yes` | Skip confirmation prompt |
-| `--permanent` | Permanently delete through the Gmail batch API instead of moving to trash |
 | `--dry-run` | Show what would be deleted without deleting |
 | `-l`, `--list` | List staged deletion batches |
 | `--account` | Filter to a specific account |
 
-Execution requires `MSGVAULT_ENABLE_REMOTE_DELETE=1`. `--list` and `--dry-run` work without the gate. `--permanent` and `--yes` are mutually exclusive because permanent deletion always requires the destructive confirmation prompt.
+Execution requires `MSGVAULT_ENABLE_REMOTE_DELETE=1`; `--list` and `--dry-run` work without the gate. Deletion is permanent on both Gmail and IMAP, so review staged batches before executing.
 
 ---
 

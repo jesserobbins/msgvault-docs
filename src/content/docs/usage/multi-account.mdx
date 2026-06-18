@@ -17,6 +17,8 @@ msgvault introduces three concepts, always in the same order: account, then iden
 
 **A collection is a named group of accounts.** The `All` collection exists by default and contains every account. You create others (`work`, `personal`, or any grouping you like) to search, report, and deduplicate a logical group without changing the underlying sources. A collection is the boundary for every cross-account operation. A collection's identity is the union of its member accounts' identities, computed at read time, so you never manage it directly. Collections contain accounts only, never other collections.
 
+<img src="/concepts/account-collection-concept.png" alt="Accounts on the left are individual ingest sources, each carrying the identifiers that mean you inside that source. Collections on the right are named groups of accounts: All contains every account, with Personal and Work as deliberate subsets." style="width: 100%; max-width: 760px; margin: 1.5rem auto; display: block;" />
+
 Deduplication operates over all three concepts and has its own [Deduplication](/usage/deduplication/) page.
 
 ## OAuth Apps and Tokens
