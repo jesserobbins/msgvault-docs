@@ -7,7 +7,9 @@ A long-running archive accumulates overlapping sources: a current Gmail sync, an
 
 The defining principle: **deduplication hides redundant copies, it does not delete them.** One survivor stays visible. The other copies drop out of normal reads but remain on disk, and `--undo` restores them. Removing data is always a separate, explicit step that you opt into.
 
-<img src="/concepts/deduplication-concept.png" alt="Deduplication keeps one survivor visible per duplicate group and hides the other copies, which remain on disk. Deleting those copies is a separate step." style="width: 100%; max-width: 760px; margin: 1.5rem auto; display: block;" />
+<figure data-lightbox style="margin: 1.5rem 0; text-align: center;">
+  <img src="/concepts/deduplication-concept.png" alt="Deduplication keeps one survivor visible per duplicate group and hides the other copies, which remain on disk. Deleting those copies is a separate step." loading="lazy" style="width: 100%; display: block;" />
+</figure>
 
 ## How Duplicates Are Detected
 
@@ -34,7 +36,9 @@ Survivor selection is deterministic and explainable, and the reasoning is printe
 
 Earlier rules win outright; later rules apply only when all earlier ones tie. The survivor inherits the union of labels from the copies it replaces, and backfills raw MIME from a non-survivor if it was missing the original payload.
 
-<img src="/concepts/survivor-selection-concept.png" alt="Survivor selection runs the sent-copy eligibility filter first, then a priority list: source preference, raw MIME, richer labels, earlier archive time, and finally a stable row ID." style="width: 100%; max-width: 760px; margin: 1.5rem auto; display: block;" />
+<figure data-lightbox style="margin: 1.5rem 0; text-align: center;">
+  <img src="/concepts/survivor-selection-concept.png" alt="Survivor selection runs the sent-copy eligibility filter first, then a priority list: source preference, raw MIME, richer labels, earlier archive time, and finally a stable row ID." loading="lazy" style="width: 100%; display: block;" />
+</figure>
 
 ## Choosing a Scope
 
@@ -54,7 +58,9 @@ This protects sent-message provenance. If Alice's Sent copy and Bob's Inbox copy
 
 Every dedup-related command sits on one of five rungs (00 through 04). Rung 00 is an automatic backup; the others you climb deliberately, one explicit action at a time. msgvault never escalates from one rung to the next on its own: applying dedup never implies a local hard delete, and a local hard delete never implies a remote delete.
 
-<img src="/concepts/safety-ladder-concept.png" alt="The safety ladder has five rungs: rung 00 automatic backup, rung 01 scan, rung 02 hide, rung 03 local hard delete, rung 04 remote delete. Each rung is a separate, opt-in action and deletion is never required." style="width: 100%; max-width: 760px; margin: 1.5rem auto; display: block;" />
+<figure data-lightbox style="margin: 1.5rem 0; text-align: center;">
+  <img src="/concepts/safety-ladder-concept.png" alt="The safety ladder: rung 00 automatic backup, then four rungs — 01 scan, 02 hide, 03 local hard delete, 04 remote delete. Each rung is a separate, opt-in action and deletion is never required." loading="lazy" style="width: 100%; display: block;" />
+</figure>
 
 | Rung | Action | Command | Reversibility |
 |---|---|---|---|
