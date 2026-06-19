@@ -55,7 +55,7 @@ Start by listing what msgvault already knows about. Every command in this guide 
 msgvault list-accounts
 ```
 
-:::tip
+:::tip[Add every account as a Test user]
 Each Gmail account must be listed as a **Test user** in the OAuth consent screen of the app that authorizes it. For Workspace accounts using a named OAuth app, add test users in that org's Google Cloud project. This is the most common reason a second account fails to authorize.
 :::
 
@@ -127,7 +127,7 @@ msgvault collection delete Work
 
 `--accounts` accepts account identifiers and numeric source IDs. One account can belong to multiple collections.
 
-:::note
+:::note[`All` is auto-managed]
 `All` is auto-managed and immutable. msgvault rejects `collection delete All` and explicit membership edits on `All`. New accounts join `All` automatically when they are created.
 :::
 
@@ -156,3 +156,7 @@ Once several accounts hold overlapping copies of the same message, [deduplicatio
 ## TUI Filtering
 
 Press `A` (uppercase) inside the TUI to open the account selector modal. Pick a single account to scope every view, or pick "All Accounts" to clear the filter. The currently selected account is shown in the title bar.
+
+## Command Reference
+
+See the [CLI Reference](/cli-reference/#add-account) for the complete flag list on `add-account`, `add-imap`, `add-o365`, `identity`, and `collection`.
