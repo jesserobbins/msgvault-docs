@@ -28,14 +28,13 @@ Survivor selection is deterministic and explainable, and the reasoning is printe
 
 1. Source type, following `--prefer` or the default order `gmail,imap,mbox,emlx,hey`.
 2. Presence of the complete raw MIME payload.
-3. Source metadata quality, such as provider IDs and threading information.
-4. Richer label or folder metadata.
-5. Earlier archive timestamp.
-6. A stable row ID, as the final tie-breaker.
+3. Richer label or folder metadata.
+4. Earlier archive timestamp.
+5. A stable row ID, as the final tie-breaker.
 
 Earlier rules win outright; later rules apply only when all earlier ones tie. The survivor inherits the union of labels from the copies it replaces, and backfills raw MIME from a non-survivor if it was missing the original payload.
 
-<img src="/concepts/survivor-selection-concept.png" alt="Survivor selection runs the sent-copy eligibility filter first, then a priority list: source preference, raw MIME, source metadata quality, richer labels, earlier archive time, and finally a stable row ID." style="width: 100%; max-width: 760px; margin: 1.5rem auto; display: block;" />
+<img src="/concepts/survivor-selection-concept.png" alt="Survivor selection runs the sent-copy eligibility filter first, then a priority list: source preference, raw MIME, richer labels, earlier archive time, and finally a stable row ID." style="width: 100%; max-width: 760px; margin: 1.5rem auto; display: block;" />
 
 ## Choosing a Scope
 

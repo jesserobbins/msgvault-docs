@@ -146,7 +146,7 @@ Workspace admins can avoid per-user browser OAuth by using a Google service acco
 3. In the Google Admin Console, authorize the service account client ID for:
    - `https://www.googleapis.com/auth/gmail.readonly`
    - `https://www.googleapis.com/auth/gmail.modify`
-   - `https://mail.google.com/` if you will run `delete-staged`
+   - `https://mail.google.com/` if you will run `delete-staged --permanent`
 4. Store the key with owner-only permissions, for example `chmod 600 /path/to/workspace-service-account.json`.
 
 Configure the key as the default Google credential:

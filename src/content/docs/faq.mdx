@@ -38,7 +38,7 @@ Yes. You can sync from any standard IMAP server using `msgvault add-imap`, use M
 
 <p class="faq-question">Does deleting email in msgvault delete it from Gmail?</p>
 
-Only if you explicitly run the full deletion workflow. Staging messages for deletion in the TUI does not touch Gmail or your IMAP provider. You must run `MSGVAULT_ENABLE_REMOTE_DELETE=1 msgvault delete-staged` to execute staged deletions. Deletion is permanent on both Gmail and IMAP, and your local archive is always preserved. See [Deleting Email](/usage/deletion/) for the complete process.
+Only if you explicitly run the full deletion workflow. Staging messages for deletion in the TUI does not touch Gmail or your IMAP provider. You must run `MSGVAULT_ENABLE_REMOTE_DELETE=1 msgvault delete-staged` to execute staged deletions. Gmail messages move to trash by default; `--permanent` opts into permanent Gmail deletion. IMAP deletion removes messages from the provider. Your local archive is always preserved. See [Deleting Email](/usage/deletion/) for the complete process.
 
 ---
 
