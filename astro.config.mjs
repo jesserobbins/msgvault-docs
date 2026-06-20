@@ -90,6 +90,8 @@ export default defineConfig({
           items: [
             { label: 'Overview', slug: 'architecture/overview' },
             { label: 'Data Storage', slug: 'architecture/storage' },
+            { label: 'PostgreSQL Backend', slug: 'architecture/postgresql' },
+            { label: 'Search Ranking', slug: 'architecture/search-ranking' },
           ],
         },
         { label: 'Troubleshooting', slug: 'troubleshooting' },

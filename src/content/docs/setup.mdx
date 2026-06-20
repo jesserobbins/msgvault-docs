@@ -43,7 +43,7 @@ conda install -c conda-forge msgvault
 
 ## Build From Source
 
-Requires Go 1.25+ and a C/C++ compiler (GCC or Clang). CGO is required because msgvault uses `mattn/go-sqlite3` (SQLite with FTS5) and `go-duckdb` (Parquet analytics), both of which compile native extensions.
+Requires Go 1.26+ and a C/C++ compiler (GCC or Clang). CGO is required because msgvault uses `mattn/go-sqlite3` (SQLite with FTS5) and `duckdb-go/v2` (Parquet analytics), both of which compile native extensions.
 
 ```bash
 git clone https://github.com/kenn-io/msgvault.git

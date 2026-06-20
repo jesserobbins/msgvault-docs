@@ -7,9 +7,9 @@ import { Aside } from '@astrojs/starlight/components';
 
 ## Overview
 
-`msgvault serve` starts an HTTP server that exposes your local email archive over a REST API. It optionally runs a background sync scheduler to keep accounts up to date on a cron-based schedule.
+`msgvault serve` starts an HTTP server that exposes your email archive over a REST API. It optionally runs a background sync scheduler to keep accounts up to date on a cron-based schedule.
 
-The API queries the same SQLite database and attachment store as the CLI and TUI. Keyword search and ordinary archive reads stay local. If vector search is enabled, semantic and hybrid search also call the embedding endpoint configured in `[vector.embeddings]`. The server is designed for local integrations, dashboards, and automation scripts.
+The API queries the same archive database and attachment store as the CLI and TUI. SQLite is the default archive database; PostgreSQL is supported when `[data].database_url` is a PostgreSQL DSN. Keyword search and ordinary archive reads stay local to that database. If vector search is enabled, semantic and hybrid search also call the embedding endpoint configured in `[vector.embeddings]`. The server is designed for local integrations, dashboards, and automation scripts.
 
 ## Quick Start
 
@@ -349,6 +349,80 @@ List configured accounts with sync status.
   ]
 }
 ```
+
+---
+
+### GET `/api/v1/sources/status`
+
+Read sync status for all sources, or filter to one source type with
+`source_type`. This endpoint is useful for dashboards and remote
+deployments because it exposes active, latest, and last-successful
+sync runs without triggering a sync.
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `source_type` | string | — | Optional source-type filter, for example `gmail`, `imap`, or `synctech_sms` |
+
+**Response:**
+
+```json
+{
+  "sources": [
+    {
+      "id": 1,
+      "source_type": "gmail",
+      "identifier": "you@gmail.com",
+      "display_name": "Personal Gmail",
+      "last_sync_at": "2026-06-18T13:02:11Z",
+      "updated_at": "2026-06-18T13:02:11Z",
+      "active_sync": null,
+      "latest_sync": {
+        "id": 42,
+        "source_id": 1,
+        "started_at": "2026-06-18T13:00:00Z",
+        "completed_at": "2026-06-18T13:02:11Z",
+        "status": "completed",
+        "messages_processed": 250,
+        "messages_added": 12,
+        "messages_updated": 3,
+        "errors_count": 1,
+        "error_message": null,
+        "cursor_before": "745391",
+        "cursor_after": "745406",
+        "skipped_count": 2,
+        "item_errors": [
+          {
+            "source_message_id": "18fedcba12345678",
+            "phase": "ingest",
+            "error_kind": "ingest_error",
+            "error_message": "parse MIME: malformed header",
+            "created_at": "2026-06-18T13:01:44Z"
+          }
+        ]
+      },
+      "last_successful_sync": {
+        "id": 41,
+        "source_id": 1,
+        "started_at": "2026-06-18T12:00:00Z",
+        "completed_at": "2026-06-18T12:01:18Z",
+        "status": "completed",
+        "messages_processed": 33,
+        "messages_added": 0,
+        "messages_updated": 1,
+        "errors_count": 0,
+        "error_message": null
+      }
+    }
+  ]
+}
+```
+
+`active_sync`, `latest_sync`, and `last_successful_sync` are `null`
+when no matching run exists. `item_errors` contains up to the 10 most
+recent per-item errors for that run. `skipped_count` counts expected
+per-item skips, such as Gmail messages that disappeared between list
+and fetch. `error_message` is `null` unless the sync run itself failed
+with a run-level error.
 
 ---
 
