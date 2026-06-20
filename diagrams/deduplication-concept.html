@@ -500,7 +500,7 @@
           <div class="stamp dup">DUP</div>
         </div>
 
-        <div class="footer-rule">Detection runs in two sequential passes: by RFC 822 Message-ID, then a normalized content-hash fallback for messages with no usable Message-ID.</div>
+        <div class="footer-rule">Detection groups by RFC 822 Message-ID. The --content-hash flag adds an optional second pass over normalized content, for copies with stripped or missing Message-IDs.</div>
         <div class="identity-rule">Survivor selection is deterministic and visible in dry-run output, so the choice is auditable before anything is hidden.</div>
       </div>
 
