@@ -43,7 +43,9 @@ separate yet.
    not host a model. Point it at a local, self-hosted, or hosted
    endpoint that you trust. Common local options include [Ollama](https://ollama.com),
    [llama.cpp's `server`](https://github.com/ggerganov/llama.cpp/tree/master/examples/server),
-   and [LM Studio](https://lmstudio.ai). The endpoint must accept
+   and [LM Studio](https://lmstudio.ai). On an Apple Silicon Mac,
+   [`afm`](https://github.com/scouzi1966/maclocal-api) is the fastest path
+   (see the tip below). The endpoint must accept
    `POST /embeddings` with an OpenAI-style JSON body and return
    indexed data rows such as
    `{"data": [{"index": 0, "embedding": [...]}]}`.
@@ -55,6 +57,29 @@ separate yet.
    invoking `go build` directly). PostgreSQL vector search additionally
    requires the `pgvector` build tag, for example
    `go build -tags "fts5 sqlite_vec pgvector" ./cmd/msgvault`.
+
+<Aside type="tip" title="Fastest path to using embeddings on Mac">
+On a Mac, the quickest endpoint is [`afm`](https://github.com/scouzi1966/maclocal-api):
+it serves OpenAI-compatible embeddings from Apple's on-device NaturalLanguage model
+over Metal, with no Python, no cloud, and no API key. Requires macOS 26 (Tahoe) or
+later on an Apple Silicon Mac with Apple Intelligence enabled.
+
+```bash
+brew tap scouzi1966/afm && brew install afm
+afm embed                      # serves http://127.0.0.1:9998/v1
+```
+
+Then point the `[vector.embeddings]` block below at it:
+
+```toml
+[vector.embeddings]
+endpoint = "http://127.0.0.1:9998/v1"
+model = "apple-nl-contextual-en"   # or apple-nl-contextual-multi (Latin-script)
+dimension = 512                    # Apple's English contextual model is 512-dim
+batch_size = 50                    # batches are serialized server-side; 50 balances HTTP overhead vs batch-rejection risk
+# afm needs no api_key_env
+```
+</Aside>
 
 ### Windows source builds
 
