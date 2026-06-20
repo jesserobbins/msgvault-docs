@@ -31,7 +31,9 @@ Google Workspace organizations often restrict OAuth to apps created within their
 
 Workspace admins can also use a Google service account with domain-wide delegation. Configure `service_account_key` under `[oauth]` or `[oauth.apps.<name>]`, authorize the service account client in the Google Admin Console, then run `msgvault add-account user@domain.com`. Service-account accounts do not store per-user refresh tokens; msgvault mints delegated tokens on demand.
 
-<img src="/oauth-multi-account.svg" alt="Diagram showing default and named OAuth apps creating separate token files for each account" width="720" />
+<figure data-lightbox style="margin: 1.5rem 0; text-align: center;">
+  <img src="/concepts/oauth-multi-account-concept.png" alt="Two OAuth apps and the token files they create. A default app (config block [oauth]) authorizes personal Gmail accounts personal@gmail.com and other@gmail.com; a named app ([oauth.apps.acme]) authorizes the Workspace account you@acme.com. Each add-account run writes its own token file under ~/.msgvault/tokens/, color-matched to its account." loading="lazy" style="width: 100%; display: block;" />
+</figure>
 
 ## Adding Accounts
 
