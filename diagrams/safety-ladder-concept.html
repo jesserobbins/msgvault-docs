@@ -503,14 +503,14 @@
     <div class="arrows" aria-hidden="true">
       <div class="arrow-cell"><strong>look</strong>see what would change</div>
       <div class="arrow-cell"><strong>then hide</strong>locally, recoverable</div>
-      <div class="arrow-cell"><strong>then purge</strong>locally, permanent</div>
-      <div class="arrow-cell"><strong>then remote</strong>at the source, opt-in</div>
+      <div class="arrow-cell"><strong>purge (opt-in)</strong>locally, permanent</div>
+      <div class="arrow-cell"><strong>remote (opt-in)</strong>independent of purge</div>
     </div>
 
     <section class="footnotes">
       <div class="note undo">
         <span class="note-title">Undo scope</span>
-        <code>--undo &lt;batch-id&gt;</code> restores rows hidden by that dedup batch and cancels the batch's pending remote-deletion manifest where the source has not yet executed it. It does not restore an exact pre-run database state, and it cannot recover rows that have moved past rung 2.
+        <code>--undo &lt;batch-id&gt;</code> restores rows hidden by that dedup batch and cancels the batch's pending remote-deletion manifest where the source has not yet executed it. It does not restore an exact pre-run database state, and it cannot recover rows purged locally at rung 03; rung-04 remote deletion leaves the hidden local rows recoverable but cannot un-delete the remote copy.
       </div>
       <div class="note cross">
         <span class="note-title">Cross-source rule (applied at staging)</span>
