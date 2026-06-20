@@ -33,7 +33,10 @@ mkdir -p "$OUT"
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
 
+shopt -s nullglob
+matched=0
 for html in *-concept.html; do
+  matched=1
   name="${html%.html}"
   tmp="$tmpdir/$name.png"
 
@@ -56,3 +59,5 @@ for html in *-concept.html; do
 
   echo "built $OUT/$name.png"
 done
+
+[ "$matched" = 1 ] || { echo "no *-concept.html files found in $(pwd)"; exit 1; }
