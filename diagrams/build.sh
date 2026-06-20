@@ -30,9 +30,12 @@ command -v magick >/dev/null 2>&1 || { echo "ImageMagick (magick) is required"; 
 OUT="../public/concepts"
 mkdir -p "$OUT"
 
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT
+
 for html in *-concept.html; do
   name="${html%.html}"
-  tmp="$(mktemp -t "$name").png"
+  tmp="$tmpdir/$name.png"
 
   # Render at 2x on a tall canvas so nothing is clipped. The page paints its
   # own #0a0a0a background; the tall viewport just leaves trimmable margin.
@@ -51,6 +54,5 @@ for html in *-concept.html; do
     -gravity south -splice 0x164 \
     "$OUT/$name.png"
 
-  rm -f "$tmp"
   echo "built $OUT/$name.png"
 done
