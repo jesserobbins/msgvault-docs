@@ -68,7 +68,7 @@ Every dedup-related command sits on one of five rungs (00 through 04). Rung 00 i
 | 01 | Scan | `deduplicate --dry-run` | no data touched |
 | 02 | Hide | `deduplicate` | reversible with `--undo <batch-id>` |
 | 03 | Local hard delete | `delete-deduped --batch <batch-id>` | irreversible locally |
-| 04 | Remote delete | `delete-staged` | leaves the local archive untouched |
+| 04 | Remote delete | `delete-staged` | local archive untouched; Gmail trash recoverable ~30 days, Gmail `--permanent` and all IMAP deletes irreversible |
 
 :::tip[Deletion is never required]
 You can run `deduplicate` as many times as you like and stay on rung 02 forever. Rungs 03 and 04 only ever run when you invoke a different command.
