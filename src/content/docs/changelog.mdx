@@ -5,6 +5,41 @@ description: Release history for msgvault
 
 All notable changes to msgvault, grouped by release.
 
+## 0.16.0
+<small>2026-06-18</small>
+
+**New features**
+
+- PostgreSQL backend with pgvector support for semantic and hybrid search.
+- Source sync status endpoint in the HTTP API.
+- Pagination for MCP `search_messages` and `list_messages`.
+
+**Improvements**
+
+- Record per-item sync errors so failed imports and fetch/ingest/delete failures are visible without treating an entire run as opaque.
+- Upgrade DuckDB support to DuckDB 1.5.4 via `duckdb-go/v2`.
+- Improve search/query behavior across MCP pagination, full-text query sanitization, and backend compatibility.
+- Update packaging and release metadata for 0.16.0.
+- Update stale project URLs to the `kenn-io/msgvault` location.
+
+**Bug fixes**
+
+- Prevent WAL corruption by isolating DuckDB's SQLite usage from the daemon.
+- Fix Linux release builds by correcting the DuckDB link.
+- Harden SyncTech SMS Backup & Restore Drive sync lifecycle handling.
+- Tolerate null source import checksums.
+
+**Acknowledgements**
+
+- Thanks to [Yuriy Grinberg](https://github.com/webgress) for the PostgreSQL backend and pgvector semantic/hybrid search support.
+- Thanks to [danshapiro](https://github.com/danshapiro) for source sync status, per-item sync diagnostics, SyncTech Drive lifecycle hardening, and null-checksum handling.
+- Thanks to [Matthew Sweeney](https://github.com/sweenzor) for the DuckDB 1.5.4 / `duckdb-go/v2` migration and stale URL cleanup.
+- Thanks to [endolith](https://github.com/endolith) for MCP pagination on `search_messages` and `list_messages`.
+- Thanks to [Marius van Niekerk](https://github.com/mariusvniekerk) for isolating DuckDB's SQLite usage from the daemon to prevent WAL corruption.
+- Thanks to [Wes McKinney](https://github.com/wesm) for the Linux release-build fix and 0.16.0 packaging/release metadata updates.
+
+---
+
 ## 0.15.2
 <small>2026-06-10</small>
 
@@ -77,6 +112,7 @@ All notable changes to msgvault, grouped by release.
 - Thanks to [sarcasticbird](https://github.com/sarcasticbird) for exposing HTML email bodies and inline MIME parts through the API.
 - Thanks to [Phillip Cloud](https://github.com/cpcloud) for the golangci-lint v2 migration, broad linter cleanup, command error-output polish, and Nix flake restructuring.
 - Thanks to [Marius van Niekerk](https://github.com/mariusvniekerk) for the `go.kenn.io/msgvault` module path migration and embedding-generation lifecycle command work.
+- Thanks to [Wes McKinney](https://github.com/wesm) for PST source-message ID namespacing, update-check rate-limit avoidance, Docker CI speedups, and the Go test-suite migration to testify.
 
 ---
 
@@ -89,6 +125,7 @@ All notable changes to msgvault, grouped by release.
 - `msgvault build-embeddings` command to generate and maintain the local vector index. Incremental by default; `--full-rebuild` creates a new generation and atomically activates it once pending work drains. Same-model rebuilds keep answering against the previous active generation while the new one is built; model or dimension changes return `index_stale` until activation.
 - Background embedding via the daemon scheduler. A new `[vector.embed.schedule]` config block drives the embed worker on cron and/or after every successful scheduled sync, so `msgvault serve` can keep the vector index current without manual intervention.
 - `/api/v1/stats` gains a `vector_search` sub-object reporting the active generation, any in-flight rebuild, and the total pending embedding queue depth.
+- `msgvault rebuild-fts` command to rebuild the SQLite FTS5 shadow table after corruption.
 
 **Improvements**
 
@@ -104,6 +141,7 @@ All notable changes to msgvault, grouped by release.
 
 - Thanks to [Yuriy Grinberg](https://github.com/webgress) for the first PostgreSQL dialect refactor, which laid groundwork for alternative storage backends.
 - Thanks to [Matthew C Roberts](https://github.com/YourEconProf) for making `remove-account` clean up unshared attachment files safely.
+- Thanks to [Wes McKinney](https://github.com/wesm) for semantic and hybrid vector search, the embedding-generation workflow, background embedding scheduler, and the FTS5 rebuild recovery command.
 
 ---
 
@@ -135,8 +173,10 @@ All notable changes to msgvault, grouped by release.
 **Acknowledgements**
 
 - Thanks to [Jesse Robbins](https://github.com/jesserobbins) for structured file logging with per-run correlation IDs, plus the full-text search performance fix and TUI race-condition fix.
+- Thanks to [Wes McKinney](https://github.com/wesm) for making the TUI inherit terminal background colors.
 
 ---
+
 ## 0.12.1
 <small>2026-04-10</small>
 
@@ -163,6 +203,7 @@ All notable changes to msgvault, grouped by release.
 **Acknowledgements**
 
 - Thanks to [Jesse Robbins](https://github.com/jesserobbins) for the advanced search work across regex matching, FTS5 prefix search, snippets, deterministic sorting, and related search-quality improvements.
+- Thanks to [Wes McKinney](https://github.com/wesm) for the completion-command registration fix, IMAP label handling fixes, MBOX import fixes, API structured-query search fix, and Docker image update.
 
 ---
 
@@ -201,6 +242,7 @@ All notable changes to msgvault, grouped by release.
 - Thanks to [arunim1](https://github.com/arunim1) for adding `--after` and `--before` date filtering to IMAP sync.
 - Thanks to [hansn74](https://github.com/hansn74) for the `from:domain.com` domain-pattern search fix.
 - Thanks to [Shantanu Singh](https://github.com/shntnu) for Nix dev-shell setup improvements.
+- Thanks to [Wes McKinney](https://github.com/wesm) for the SQL query interface, Claude Code skill, text-message imports, cache rebuilds after writes, MCP read-only database mode, IMAP greeting handling, and label-conflict fix.
 
 ---
 
@@ -228,6 +270,7 @@ All notable changes to msgvault, grouped by release.
 - Thanks to [Jason Kuhrt](https://github.com/jasonkuhrt) for exposing `source_conversation_id` in CLI JSON output.
 - Thanks to [Alexander Mangel](https://github.com/Cygnusfear) for improving IMAP4rev1 compatibility by removing `ESEARCH RETURN (ALL)`.
 - Thanks to [endolith](https://github.com/endolith) for fixing IPv6 host parsing in `add-imap`.
+- Thanks to [Wes McKinney](https://github.com/wesm) for multiple Google OAuth app support and masked IMAP password entry.
 
 ---
 
@@ -254,6 +297,7 @@ All notable changes to msgvault, grouped by release.
 
 - Thanks to [Ben Labaschin](https://github.com/EconoBen) for TUI remote-server support.
 - Thanks to [David GG](https://github.com/davidggphy) for adding the `--account` search flag.
+- Thanks to [Wes McKinney](https://github.com/wesm) for IMAP account support, Apple Mail V10 import fixes and account auto-discovery, MIME parse error truncation, and sync re-auth token isolation.
 
 ---
 
@@ -278,6 +322,7 @@ All notable changes to msgvault, grouped by release.
 
 - Thanks to [Hugh Brown](https://github.com/hughdbrown) for expired/revoked OAuth-token recovery with automatic re-authentication and `--force`.
 - Thanks to [Hugh Brown](https://github.com/hughdbrown) for query-layer refactoring that reduced duplication between DuckDB and SQLite paths.
+- Thanks to [Wes McKinney](https://github.com/wesm) for `create-subset`, `remove-account`, Apple Mail V10 layout support, and the ingest foreign-key fix.
 
 ---
 
@@ -306,6 +351,7 @@ All notable changes to msgvault, grouped by release.
 - Thanks to [Ben Labaschin](https://github.com/EconoBen) for NAS and Docker deployment support.
 - Thanks to [Pavel Zwerschke](https://github.com/pavelzw) for additional package-manager installation instructions.
 - Thanks to [bchoor](https://github.com/bchoor) for store time-parsing unit tests.
+- Thanks to [Wes McKinney](https://github.com/wesm) for TUI label and aggregate search fixes and Docker Compose template cleanup.
 
 ---
 
@@ -335,6 +381,7 @@ All notable changes to msgvault, grouped by release.
 - Thanks to [Ben Labaschin](https://github.com/EconoBen) for the HTTP API server, daemon mode, and scheduled sync foundation.
 - Thanks to [Rob Elkin](https://github.com/robelkin) for account filters on MCP search, list, and aggregate tools.
 - Thanks to [Ben Lovell](https://github.com/socksy) for the initial Nix flake and automated vendor-hash maintenance.
+- Thanks to [Wes McKinney](https://github.com/wesm) for optimizing incremental sync, hardening cache handling, adding Gmail thread IDs to query results, improving batch-deletion UX, and adding the TUI hide-deleted filter.
 
 ---
 
@@ -366,6 +413,7 @@ All notable changes to msgvault, grouped by release.
 
 - Thanks to [Hugh Brown](https://github.com/hughdbrown) for cross-platform secure file permissions with Windows DACL support.
 - Thanks to [Hugh Brown](https://github.com/hughdbrown) for several security and reliability fixes, including OAuth browser command-injection hardening, attachment path-traversal fixes, MCP bounds checks, panic handling, and encoding repair error handling.
+- Thanks to [Wes McKinney](https://github.com/wesm) for FTS5 indexing and backfill, Windows update/build support, `--home`, Windows path diagnostics, invalid UTF-8 handling, and TUI search/navigation fixes.
 
 ---
 
@@ -400,6 +448,7 @@ All notable changes to msgvault, grouped by release.
 - Thanks to [Ethan Byrd](https://github.com/etbyrd) for account CLI updates and the `sync-full --limit` fix.
 - Thanks to [Hugh Brown](https://github.com/hughdbrown) for security fixes across SQL query handling, attachment path traversal, symlink traversal, MIME date parsing, and panic handling.
 - Thanks to [Rob Elkin](https://github.com/robelkin) for fixing cache consistency after deletions.
+- Thanks to [Wes McKinney](https://github.com/wesm) for Windows installer/config support, attachment export commands, MCP attachment resources, `export_attachment`, DuckDB type fixes, MIME date fixes, and incremental export fixes.
 
 ---
 
@@ -438,6 +487,7 @@ All notable changes to msgvault, grouped by release.
 - Thanks to [Hugh Brown](https://github.com/hughdbrown) for tightening private-resource file permissions.
 - Thanks to [Ethan Byrd](https://github.com/etbyrd) for fixing missing `rows.Err()` handling in participant batching.
 - Thanks to [Matt Galligan](https://github.com/galligan) for fixing broken README documentation links.
+- Thanks to [Wes McKinney](https://github.com/wesm) for making `sync` and `sync-full` run across all accounts, and for deletion workflow fixes around scope escalation, checkpoint recovery, and progress reporting.
 
 ---
 
@@ -452,7 +502,7 @@ All notable changes to msgvault, grouped by release.
 **Acknowledgements**
 
 - Thanks to [Hugh Brown](https://github.com/hughdbrown) for the memory-efficient string-join improvement.
-- Thanks to [Ethan Byrd](https://github.com/etbyrd) for fixing recipient-name filters to include BCC recipients.
+- Thanks to [Wes McKinney](https://github.com/wesm) for replacing the built-in chat command with the MCP server.
 
 ---
 
@@ -475,6 +525,11 @@ All notable changes to msgvault, grouped by release.
 - Fix TUI update notification to show commit and date info in release builds.
 - Fix incorrect elapsed time reporting during sync.
 - Fix recipient name filters to include BCC recipients.
+
+**Acknowledgements**
+
+- Thanks to [Ethan Byrd](https://github.com/etbyrd) for fixing recipient-name filters to include BCC recipients.
+- Thanks to [Wes McKinney](https://github.com/wesm) for Linux build compatibility, the `sync` rename, OAuth setup guidance, TUI release/update polish, and sync elapsed-time fixes.
 
 ---
 

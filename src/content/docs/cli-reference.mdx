@@ -650,7 +650,7 @@ Use this if `verify` reports FTS5 shadow-table corruption such as a malformed in
 
 ## embeddings
 
-Manage the vector embedding index used by `--mode vector` and `--mode hybrid` search. Requires a build with `sqlite_vec` support (default via `make build`) and a configured `[vector.embeddings]` endpoint. See [Vector Search](/usage/vector-search/) for prerequisites, model rotation, and troubleshooting.
+Manage the vector embedding index used by `--mode vector` and `--mode hybrid` search. Requires a build with a vector backend (`sqlite_vec` for SQLite archives, `pgvector` for PostgreSQL archives) and a configured `[vector.embeddings]` endpoint. See [Vector Search](/usage/vector-search/) for prerequisites, model rotation, and troubleshooting.
 
 ```bash
 msgvault embeddings <subcommand> [flags]

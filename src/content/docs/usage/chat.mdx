@@ -47,7 +47,7 @@ The MCP server exposes the following tools to connected AI clients:
 
 | Tool | Description | Parameters |
 |---|---|---|
-| `search_messages` | Search with Gmail-like query syntax. When [vector search](/usage/vector-search/) is configured, supports semantic and hybrid modes. | `query` (string, required), `mode` (string: `fts`/`vector`/`hybrid`, default `fts`), `explain` (bool), `limit` (int), `offset` (int, `fts` only), `account` (string) |
+| `search_messages` | Search with Gmail-like query syntax. When [vector search](/usage/vector-search/) is configured, supports semantic and hybrid modes. | `query` (string, required), `mode` (string: `fts`/`vector`/`hybrid`, default `fts`), `explain` (bool), `limit` (int), `offset` (int), `account` (string) |
 | `find_similar_messages` | Nearest-neighbor search from a seed message's embedding. Requires vector search to be configured and an active index generation. | `message_id` (int, required), `limit` (int), `account` (string), `after` (string), `before` (string), `has_attachment` (bool) |
 | `search_by_domains` | Find messages where any participant (`from`, `to`, or `cc`) belongs to one of several domains, regardless of direction. | `domains` (comma-separated string, required), `limit` (int), `offset` (int), `after` (string), `before` (string) |
 | `get_message` | Get full message details by ID | `id` (int) |
@@ -58,7 +58,30 @@ The MCP server exposes the following tools to connected AI clients:
 | `aggregate` | Grouped statistics (top senders, domains, labels, time series) | `group_by` (string: sender/recipient/domain/label/time), `limit` (int), `after` (string), `before` (string), `account` (string) |
 | `stage_deletion` | Stage messages for deletion (creates manifest only) | `query` (string) OR structured filters: `from` (string), `domain` (string), `label` (string), `after` (string), `before` (string), `has_attachment` (bool); optional: `account` (string) |
 
-`find_similar_messages` is only registered when the server starts with vector search configured. `search_messages` is always available, but `mode=vector` and `mode=hybrid` return `vector_not_enabled` when the server is not configured for vector search. Vector and hybrid queries require at least one free-text term (operator-only queries return `missing_free_text`), and do not support pagination (`offset>0` returns `pagination_unsupported`). Bump `limit` (capped by `max_page_size_hybrid`) to see more results.
+`search_messages` and `list_messages` return paginated JSON:
+
+```json
+{
+  "data": [],
+  "total": -1,
+  "returned": 20,
+  "offset": 0,
+  "has_more": true
+}
+```
+
+Use `offset` and `limit` to request subsequent pages. `search_messages`
+and `list_messages` default to `limit = 20` and cap it at 50. When a
+backend cannot report a full result count, `total` is `-1`; use
+`has_more` as the pagination signal. `list_messages` uses this
+`total = -1` shape because it does not run a separate count query.
+
+`find_similar_messages` is only registered when the server starts with vector search configured. `search_messages` is always available, but `mode=vector` and `mode=hybrid` return `vector_not_enabled` when the server is not configured for vector search. Vector and hybrid queries require at least one free-text term (operator-only queries return `missing_free_text`). They support `offset`/`limit` pagination inside the configured hybrid ranking window; when `[vector.search].max_page_size_hybrid` is positive, an `offset` at or beyond that cap returns `pagination_limit`. Use `mode=fts` for deeper pagination or adjust that config cap.
+
+In `mode=vector` and `mode=hybrid`, the paginated response also includes
+top-level `mode`, `pool_saturated`, and `generation` fields. When
+`explain = true`, each item in `data` may include a `score` object with
+the fused ranking components.
 
 ## Example Usage with Claude
 

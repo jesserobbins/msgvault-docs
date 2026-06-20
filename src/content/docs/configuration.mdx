@@ -19,7 +19,7 @@ Override the data directory with the `MSGVAULT_HOME` environment variable or the
 # Base data directory (default: ~/.msgvault)
 data_dir = "/path/to/msgvault/data"
 
-# Database URL (default: {data_dir}/msgvault.db)
+# Database URL (default: {data_dir}/msgvault.db; PostgreSQL DSN supported)
 database_url = "/path/to/msgvault.db"
 
 [oauth]
@@ -70,9 +70,10 @@ schedule = "0 * * * *"
 enabled = true
 
 [vector]
-# Semantic and hybrid search (opt-in; requires a build with sqlite_vec)
+# Semantic and hybrid search (opt-in)
 enabled = true
 backend = "sqlite-vec"
+# backend = "pgvector"  # with a PostgreSQL database_url and pgvector build
 
 [vector.embeddings]
 endpoint = "http://localhost:11434/v1"
@@ -119,7 +120,7 @@ client_secrets = 'C:\Users\you\Downloads\client_secret.json'
 | Key | Default | Description |
 |---|---|---|
 | `data_dir` | `~/.msgvault` | Base directory for all data |
-| `database_url` | `{data_dir}/msgvault.db` | SQLite database path |
+| `database_url` | `{data_dir}/msgvault.db` | SQLite database path or PostgreSQL DSN |
 
 Attachments and OAuth tokens are stored in subdirectories of `data_dir` (`attachments/` and `tokens/` respectively). These paths are not independently configurable.
 
@@ -237,13 +238,14 @@ Scheduled SMS Backup & Restore sources are configured with `[[synctech_sms.sourc
 
 ### `[vector]`
 
-Top-level toggle and backend selection for semantic/hybrid search. Requires a build with `sqlite_vec` support (default via `make build`). See [Vector Search](/usage/vector-search/) for prerequisites, initial embedding, and the full workflow.
+Top-level toggle and backend marker for semantic/hybrid search. SQLite vector search requires a build with `sqlite_vec` support (default via `make build`). PostgreSQL vector search requires a build with the `pgvector` tag and a PostgreSQL `[data].database_url`. See [Vector Search](/usage/vector-search/) for prerequisites, initial embedding, and the full workflow.
 
 | Key | Default | Description |
 |---|---|---|
 | `enabled` | `false` | Turn on vector and hybrid search. When `false`, `mode=vector` and `mode=hybrid` return `vector_not_enabled`. |
-| `backend` | `sqlite-vec` | Vector backend. Only `sqlite-vec` is supported. |
-| `db_path` | `<data_dir>/vectors.db` | Path to the co-located vectors database. |
+| `backend` | `sqlite-vec` | Backend marker. Supported values are `sqlite-vec` and `pgvector`; the concrete backend is selected from `[data].database_url`. |
+| `db_path` | `<data_dir>/vectors.db` | SQLite vector database path. Ignored by the PostgreSQL pgvector backend. |
+| `skip_extension_create` | `false` | PostgreSQL only. Skip `CREATE EXTENSION IF NOT EXISTS vector` when pgvector is already installed by an administrator. |
 
 #### `[vector.embeddings]`
 
@@ -327,7 +329,7 @@ All data lives under the msgvault home directory (`~/.msgvault` on macOS/Linux, 
 | File | Description |
 |---|---|
 | `config.toml` | Configuration file |
-| `msgvault.db` | SQLite database (system of record) |
+| `msgvault.db` | SQLite database (system of record when PostgreSQL is not configured) |
 | `attachments/` | Content-addressed attachment files |
 | `tokens/` | OAuth tokens per account |
 | `logs/` | Structured log files (when [file logging](/configuration/#log) is enabled) |
