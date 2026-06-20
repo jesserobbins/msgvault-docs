@@ -500,7 +500,7 @@
           <div class="stamp dup">DUP</div>
         </div>
 
-        <div class="footer-rule">Detection uses Message-ID, normalized content hashes, and provider IDs together — not as separate passes.</div>
+        <div class="footer-rule">Detection runs in two sequential passes: by RFC 822 Message-ID, then a normalized content-hash fallback for messages with no usable Message-ID.</div>
         <div class="identity-rule">Survivor selection is deterministic and visible in dry-run output, so the choice is auditable before anything is hidden.</div>
       </div>
 
@@ -510,7 +510,7 @@
           <div class="rule">One survivor stays visible. The others are hidden on this rung; nothing has been deleted yet.</div>
         </div>
 
-        <div class="group-tag kept">batch dedup-2026-04-29-01 · undo available</div>
+        <div class="group-tag kept">batch dedup-20260503-091500-7-… · undo available</div>
 
         <div class="row">
           <div class="acct">
