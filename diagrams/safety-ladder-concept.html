@@ -429,7 +429,7 @@
       <span class="rung-zero-num">00</span>
       <div class="rung-zero-body">
         <div class="rung-zero-name">Backup (Rung 00, automatic and default-on)</div>
-        <div class="rung-zero-desc">Before <code>deduplicate</code> or <code>delete-deduped</code> changes a single row, msgvault writes a point-in-time copy of your database alongside it (e.g. <code>msgvault.db.dedup-backup-20260503-083100</code>). Opt out only with <code>--no-backup</code>.</div>
+        <div class="rung-zero-desc">Before <code>deduplicate</code> or <code>delete-deduped</code> changes a single row, msgvault writes a point-in-time copy of your database alongside it (e.g. <code>msgvault.db.dedup-backup-20260503-083100</code>). SQLite archives only; on PostgreSQL, snapshot with <code>pg_dump</code> first, then <code>--no-backup</code>. Opt out with <code>--no-backup</code>.</div>
       </div>
       <span class="rung-zero-cmd">--no-backup to skip</span>
     </div>
@@ -493,7 +493,7 @@
         <div class="rung-summary">Execute staged deletions against the source server (Gmail, IMAP, …). <code>delete-staged</code> runs any staged manifest, not just dedup.</div>
         <ul class="rung-list">
           <li>Same-source filter is set at staging, by <code>--delete-dups-from-source-server</code></li>
-          <li>Trash by default (Gmail/Trash, ~30-day recovery); <code>--permanent</code> to purge</li>
+          <li>Gmail: trash by default (~30-day recovery), <code>--permanent</code> to purge. IMAP: always permanent (expunge)</li>
           <li>Cross-source groups stage nothing; each server's original stays put</li>
         </ul>
         <div class="rung-foot"><span class="badge">leaves the local archive</span></div>

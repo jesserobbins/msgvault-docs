@@ -59,12 +59,12 @@ This protects sent-message provenance. If Alice's Sent copy and Bob's Inbox copy
 Every dedup-related command sits on one of five rungs (00 through 04). Rung 00 is an automatic backup; the others you climb deliberately, one explicit action at a time. msgvault never escalates from one rung to the next on its own: applying dedup never implies a local hard delete, and a local hard delete never implies a remote delete.
 
 <figure data-lightbox style="margin: 1.5rem 0; text-align: center;">
-  <img src="/concepts/safety-ladder-concept.png" alt="The safety ladder: five rungs, 00 through 04. Rung 00 is an automatic backup; rungs 01 scan, 02 hide, 03 local hard delete, and 04 remote delete are deliberate, opt-in actions. Deletion is never required." loading="lazy" style="width: 100%; display: block;" />
+  <img src="/concepts/safety-ladder-concept.png" alt="The safety ladder: five rungs, 00 through 04. Rung 00 is an automatic SQLite-only backup (PostgreSQL uses pg_dump); rungs 01 scan, 02 hide, 03 local hard delete, and 04 remote delete are deliberate, opt-in actions. Remote deletes go to Gmail trash by default but are permanent on IMAP. Deletion is never required." loading="lazy" style="width: 100%; display: block;" />
 </figure>
 
 | Rung | Action | Command | Reversibility |
 |---|---|---|---|
-| 00 | Backup (automatic) | runs before rungs 02 and 03 | writes a point-in-time backup |
+| 00 | Backup (automatic, SQLite-only) | runs before rungs 02 and 03 | point-in-time backup; PostgreSQL uses `pg_dump` |
 | 01 | Scan | `deduplicate --dry-run` | no data touched |
 | 02 | Hide | `deduplicate` | reversible with `--undo <batch-id>` |
 | 03 | Local hard delete | `delete-deduped --batch <batch-id>` | irreversible locally |
