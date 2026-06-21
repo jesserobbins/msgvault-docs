@@ -6,7 +6,7 @@
 
 ## Technical facts
 
-- msgvault deletion is always permanent. There is no trash mode. `msgvault delete-staged` permanently deletes messages from Gmail. Do not reference "trash", "recoverable", or "30 days" in deletion documentation.
+- `msgvault delete-staged` defaults to moving messages to Gmail trash (recoverable for ~30 days); pass `--permanent` for permanent batch deletion. Remote deletion is the final, opt-in rung of the safety ladder, gated behind `MSGVAULT_ENABLE_REMOTE_DELETE=1`.
 - msgvault requests full Gmail account access (not narrow/minimal scopes). Do not claim it uses restricted or read-only OAuth scopes.
 
 ## Git workflow
